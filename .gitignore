@@ -1,0 +1,17 @@
+logs
+*.log
+tags
+pids
+*.pid
+*.seed
+lib-cov
+coverage
+.grunt
+build/Release
+node_modules
+.lock-wscript
+.DS_Store
+db/journal/j._0
+db/journal/*
+db/*
+db/mongod.lock

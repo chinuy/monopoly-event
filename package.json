@@ -1,0 +1,24 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "@routes/index": "^1.2.1",
+    "async": "*",
+    "body-parser": "~1.0.0",
+    "cookie-parser": "~1.0.1",
+    "debug": "~0.7.4",
+    "express": "*",
+    "glob": "*",
+    "method-override": "*",
+    "mongodb": "^2.2.36",
+    "mongoskin": "*",
+    "morgan": "~1.0.0",
+    "route": "^0.2.5",
+    "socket.io": ">=0.9.16",
+    "static-favicon": "~1.0.0"
+  }
+}

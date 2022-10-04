@@ -1,0 +1,142 @@
+{"X":[
+  { "Q":"RUN",
+    "url": "images/card/run.jpg",
+    "A": "前進3步"
+  },
+  { "Q":"Angel is coming",
+    "url": "images/card/angel.jpg",
+    "A": "送禮物啦!"
+  },
+  { "Q":"Stomach Time",
+    "url": "images/card/food_king1.gif",
+    "A": "大胃王比賽"
+  },
+  { "Q":"Park",
+    "url": "images/card/park2.jpg",
+    "A": "今天就休息一天吧"
+  },
+  { "Q":"RUN",
+    "url": "images/card/run.jpg",
+    "A": "倒退2步"
+  },
+  { "Q":"Fortune God",
+    "url": "images/card/fortune_god.jpg",
+    "A": "抽獎!!"
+  },
+  { "Q":"Angel is coming",
+    "url": "images/card/angel.jpg",
+    "A": "送禮物啦!"
+  },
+  { "Q":"Rich God",
+    "url": "images/card/rich_god.jpg",
+    "A": "得到4000分"
+  },
+  { "Q":"Tax Season",
+    "url": "images/card/tax.jpg",
+    "A": "損失5000分"
+  },
+  { "Q":"RUN",
+    "url": "images/card/run.jpg",
+    "A": "倒退2步"
+  },
+  { "Q":"Fortune God",
+    "url": "images/card/fortune_god.jpg",
+    "A": "抽獎!!"
+  },
+  { "Q":"Rober",
+    "url": "images/card/rober.jpg",
+    "A": "搶走指定隊伍8000分"
+  },
+  { "Q":"Park",
+    "url": "images/card/park1.jpg",
+    "A": "感謝飛天小女警"
+  },
+  { "Q":"RUN",
+    "url": "images/card/run.jpg",
+    "A": "前進6步"
+  },
+  { "Q":"Angel is coming",
+    "url": "images/card/angel.jpg",
+    "A": "送禮物啦!"
+  },
+  { "Q":"Fortune God",
+    "url": "images/card/fortune_god.jpg",
+    "A": "抽獎!!"
+  },
+  { "Q":"Rich God",
+    "url": "images/card/rich_god.jpg",
+    "A": "得到1000分"
+  },
+  { "Q":"Tax Season",
+    "url": "images/card/tax.jpg",
+    "A": "損失3000分"
+  },
+  { "Q":"Rober",
+    "url": "images/card/rober.jpg",
+    "A": "搶走指定隊伍3000分"
+  },
+  { "Q":"Angel is coming",
+    "url": "images/card/angel.jpg",
+    "A": "送禮物啦!"
+  },
+  { "Q":"Fortune God",
+    "url": "images/card/fortune_god.jpg",
+    "A": "抽獎!!"
+  },
+  { "Q":"Park",
+    "url": "images/card/park2.jpg",
+    "A": "今天就休息一天吧"
+  },
+  { "Q":"RUN",
+    "url": "images/card/run.jpg",
+    "A": "倒退2步"
+  },
+  { "Q":"RUN",
+    "url": "images/card/run.jpg",
+    "A": "前進2步"
+  },
+  { "Q":"Fortune God",
+    "url": "images/card/fortune_god.jpg",
+    "A": "抽獎!!"
+  },
+  { "Q":"Park",
+    "url": "images/card/park2.jpg",
+    "A": "今天就休息一天吧"
+  },
+  { "Q":"Rich God",
+    "url": "images/card/rich_god.jpg",
+    "A": "得到5000分"
+  },
+  { "Q":"Tax Season (reloaded)",
+    "url": "images/card/tax.jpg",
+    "A": "損失9000分"
+  },
+  { "Q":"Fortune God",
+    "url": "images/card/fortune_god.jpg",
+    "A": "抽獎!!"
+  },
+  { "Q":"Rober",
+    "url": "images/card/rober.jpg",
+    "A": "搶走指定隊伍5000分"
+  },
+  { "Q":"Park",
+    "url": "images/card/park1.jpg",
+    "A": "感謝飛天小女警"
+  },
+  { "Q":"Fortune God",
+    "url": "images/card/fortune_god.jpg",
+    "A": "抽獎!!"
+  },
+  { "Q":"Stomach Time 2",
+    "url": "images/card/food_king2.jpg",
+    "A": "大胃王比賽"
+  },
+  { "Q":"Stomach Time 3",
+    "url": "images/card/food_king3.jpg",
+    "A": "大胃王比賽"
+  },
+  { "Q":"Equal Prosperity",
+    "url": "images/card/equal_prosperity.jpg",
+    "A": "所有人分數平分"
+  }
+]}
