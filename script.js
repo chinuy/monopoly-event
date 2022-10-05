@@ -74,33 +74,50 @@ var Game = (function() {
   //set the game property for current player. Initially player 1. (Using an index of the game.players array.)
   game.currentPlayer = 0;
 
-  //set up a method that will add the squares to the game board
-  game.populateBoard = function() {
-    const gameBoard = document.getElementById("game_board")
-    const ROW = 6
-    const COL = 4
-    let num = 0
-    for (let i = 0; i < COL; i++) {
-      let rowHtml = ""
-      for (let j = 0; j < ROW; j++) {
-        if(i > 0 && i < COL-1 && j > 0 && j < ROW-1) {
-          rowHtml += `
-          <div class="cell middle"></div>
-          `
-        } else {
-          num += 1;
-          rowHtml += `
+  function cell(num) {
+    return `
         <div class="cell square" id="square${num}">
           <p id="square${num}-name" class="square-name"></p>
           <p id="square${num}-value"></p>
           <img id="square${num}-image"></img>
           <p id="square${num}-residents"></p>
         </div>
-        `;
-        }
+        `
+  }
+
+  //set up a method that will add the squares to the game board
+  game.populateBoard = function() {
+    const gameBoard = document.getElementById("game_board")
+    const X = 6
+    const Y = 4
+    let headIdx = 1
+    let tailIdx = 2*X + 2*(Y-2)
+
+    // generate first row
+    let rowHtml = ""
+    for (let i = 0; i < X; i++) {
+      rowHtml += cell(headIdx++);
+    }
+    gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`
+
+    // generate middle row
+    for (let i = 1; i < Y-1; i++) {
+      let rowHtml = ""
+      rowHtml += cell(tailIdx--);
+      for (let j = 1; j < X-1; j++) {
+          rowHtml += '<div class="cell middle"></div>'
       }
+      rowHtml += cell(headIdx++);
       gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`
     }
+
+    // generate last row
+    rowHtml = ""
+    for (let i = 0; i < X; i++) {
+      rowHtml += cell(tailIdx--)
+    }
+    gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`
+
     //loop through all the squares in the game board
     for (var i = 0; i < this.squares.length; i++) {
       //get square ID from object and then find its div
@@ -137,6 +154,7 @@ var Game = (function() {
   //advance the player
   //call function to either allow purchase or charge rent
   game.takeTurn = function() {
+    console.log("HHH")
     //roll dice and advance player
     movePlayer();
 
@@ -174,6 +192,7 @@ var Game = (function() {
 
   //function to "roll the dice" and advance the player to the appropriate square
   function movePlayer() {
+    console.log("HIT/roll")
     //"dice roll". Should be between 1 and 4
     var moves = Math.floor(Math.random() * (4 - 1) + 1);
     //need the total number of squares, adding 1 because start isn't included in the squares array
