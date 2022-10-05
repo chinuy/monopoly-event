@@ -1,31 +1,95 @@
 // mongoDB
-var mongo = require('mongoskin');
-var db = mongo.db("mongodb://localhost:27017/local", {native_parser:true});
-db.bind('logo');
-db.bind('geo');
-db.bind('wisdom');
-db.bind('team');
-db.bind('destiny');
+// var mongo = require('mongoskin');
+// // var db = mongo.db("mongodb://localhost:27017/local", {native_parser:true});
+// db.bind('logo');
+// db.bind('geo');
+// db.bind('wisdom');
+// db.bind('team');
+// db.bind('destiny');
+var MongoClient = require("mongodb").MongoClient;
+const mongoose = require('mongoose')
+// const client = new MongoClient("mongodb://localhost:27017");
+var url = "mongodb://localhost:27017/local"
+main().catch(err => console.log(err));
 
+async function main() {
+  await mongoose.connect(url)
+  const schema = new mongoose.Schema({ name: 'string', location: 'number', score: 'number' }, { collection : 'team' });
+  const Team = mongoose.model('team', schema);
+  Team.find().exec( (err, team) => console.log(err, team))
+  
+  // use `await mongoose.connect('mongodb://user:password@localhost:27017/test');` if your database has auth enabled
+}
+// const connect = () => {
+//   MongoClient.connect(
+//   url,
+//   {
+//   },
+//   (err, client) => {
+//     if (err) {
+//       return console.log(err);
+//     }
 
-var http = require("http");
+//     // Specify the database you want to access
+//     const db = client.db("local");
+
+//     const teams = db.collection("team")
+//     const team = teams.findOne( (err, item) => console.log(err, team) )
+//     // let cursor = team.find()//.toArray(function (err, items) {
+//     //   if ((await cursor.count()) === 0) {
+//     //     console.log("No documents found!");
+//     //   }
+//     //   // replace console.dir with your callback to access individual elements
+//     //   await cursor.forEach(console.dir);
+//     //   console.log(err, items);
+//     //   score = [];
+//     //   items.forEach(function (k, i) {
+//     //     score.push(k["score"]);
+//     //   });
+//     // });
+
+// // db.team.find().sort({"name":1}).toArray(function(err, items) {
+// //   location = [];
+// //   items.forEach(function(k, i){
+// //     location.push(k["location"]);
+// //   });
+// // });
+//     console.log(`MongoDB Connected: ${url}`);
+//     return db;
+//   }
+// )}
+
+// async function run() {
+//   try {
+//     const database = client.db("local");
+//     const movies = database.collection("team");
+//     // Query for a movie that has the title 'The Room'
+//     const query = {  };
+//     const options = {
+//       // sort matched documents in descending order by rating
+//       sort: { "name": 1 }
+//     };
+//     const movie = await movies.find(query, options);
+//     // since this method returns the matched document, not a cursor, print it directly
+//     console.log(movie);
+//   } finally {
+//     await client.close();
+//   }
+// }
+// run().catch(console.dir);
+
 var url = require('url');
-var fs = require('fs');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var routes = require('./routes/index');
-var users = require('./routes/users');
+// var routes = require('./routes/index');
 var methodOverride = require('method-override');
-//var app = express();
 var express = require('express')
   , path = require('path')
   , app = express()
-    
   , server = require('http').createServer(app)
-  , io = require('socket.io').listen(server);
-
+  , io = require('socket.io')(server);
 
 var grid_id = {
   1: "start",
@@ -49,30 +113,16 @@ var grid_id = {
   34: "geo",
   35: "opportunity"
 }
-var null_function = function(){};
+
 var score;
 var location;
 var logoname,logourl,logopriority;
 var wisdomname,wisdomtitle,wisdompriority;
 var geoname,geotitle,geopriority;
 var destinyname,destinytitle,destinypriority;
-db.team.find().sort({"name":1}).toArray(function(err, items) {
-  score = [];
-  items.forEach(function(k, i){
-    score.push(k["score"]);
-  });
-});
-
-db.team.find().sort({"name":1}).toArray(function(err, items) {
-  location = [];
-  items.forEach(function(k, i){
-    location.push(k["location"]);
-  });
-});
 
 
-
-io.set('log level', 1); 
+// io.set('log level', 1); 
 
 
 io.on('connection', function (socket) {
@@ -400,7 +450,7 @@ socket.on('gui', function(data) {
 
   app.use(bodyParser());
    app.use(methodOverride());
-   //app.use(app.router);
+  //  app.use(app.router);
 
   app.set('port', process.env.PORT || 3000, "0.0.0.0");
 
@@ -408,7 +458,7 @@ socket.on('gui', function(data) {
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+// app.use('/', routes);
 
 
 app.use(favicon());
