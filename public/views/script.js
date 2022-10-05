@@ -41,20 +41,23 @@ var Game = (function() {
   //I don't confuse them with object properties
   //there are 11 properties on the game board.
   //each has a unique name and value, so each will probably need to be built individually (not through a loop)
-  game.squares = [
-    new Square("Start", 100, "square1", "card/start"),
-    new Square("Basset Hound Ave.", 100, "square2", "card/question"),
-    new Square("Great Dane Street", 150, "square3", "building/canes"),
-    new Square("Geography question", 200, "square4", "building/geo_2"),
-    new Square("Geography question", 250, "square5", "building/geo_1"),
-    new Square("Retriever Road", 300, "square6", "building/dennys"),
-    new Square("German Shepard Road", 350, "square7", "building/mcalisters"),
-    new Square("Greyhound Gap", 400, "square8", "building/jimmy"),
-    new Square("Whippet Way", 450, "square9", "building/ihop"),
-    new Square("Labrador Lane", 500, "square10", "building/roadhouse"),
-    new Square("Beagle Blvd.", 550, "square11", "building/rudys"),
-    new Square("Walker Hound Way", 600, "square12", "building/whatta")
-  ];
+
+  blocks = [
+    {name: "Start", image: "card/start"},
+    {name: "Geography", image: "building/geo_3"},
+    {name: "Wisdom", image: "building/jimmy"},
+    {name: "Geography", image: "building/geo_2"},
+    {name: "Wisdom", image: "building/roadhouse"},
+    {name: "Logo King", image: "building/canes"},
+    {name: "Geography", image: "building/geo_1"},
+    {name: "Wisdom", image: "building/dennys"},
+    {name: "Chance", image: "card/question"},
+    {name: "Wisdom", image: "building/whatta"},
+    {name: "Logo King", image: "building/ihop"},
+    {name: "Wisdom", image: "building/rudys"},
+  ]
+
+  game.squares = blocks.map( (block, i) => new Square(block.name, 100, "square" + (i+1), block.image))
 
   //build an array of players
   //note: initial version of the game only allows two fixed players
@@ -77,11 +80,11 @@ var Game = (function() {
       //paragraphs for square info preexist in HTML. That way they just have to be
       //updated here and I can use the same method to create and update
       var squareName = document.getElementById(id + "-name");
-      var squareValue = document.getElementById(id + "-value");
+      // var squareValue = document.getElementById(id + "-value");
       var squareImage = document.getElementById(id + "-image");
 
       squareName.innerHTML = this.squares[i].name;
-      squareValue.innerHTML = "$" + this.squares[i].value;
+      // squareValue.innerHTML = "$" + this.squares[i].value;
       squareImage.src = "../images/" + this.squares[i].image + ".png";
     }
 
