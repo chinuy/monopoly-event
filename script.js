@@ -154,7 +154,6 @@ var Game = (function() {
   //advance the player
   //call function to either allow purchase or charge rent
   game.takeTurn = function() {
-    console.log("HHH")
     //roll dice and advance player
     movePlayer();
 
@@ -181,6 +180,7 @@ var Game = (function() {
   //(leaving this as a private function rather than method of Player because
   //current player is more of a game level property than a player level property)
   function nextPlayer(currentPlayer) {
+    console.log(currentPlayer, game.players)
     var nextPlayer = currentPlayer + 1;
 
     if (nextPlayer == game.players.length) {
@@ -192,11 +192,10 @@ var Game = (function() {
 
   //function to "roll the dice" and advance the player to the appropriate square
   function movePlayer() {
-    console.log("HIT/roll")
     //"dice roll". Should be between 1 and 4
     var moves = Math.floor(Math.random() * (4 - 1) + 1);
     //need the total number of squares, adding 1 because start isn't included in the squares array
-    var totalSquares = game.squares.length + 1;
+    var totalSquares = game.squares.length;
     //get the current player and the square he's on
     var currentPlayer = game.players[game.currentPlayer];
     var currentSquare = parseInt(currentPlayer.currentSquare.slice(6));
@@ -239,66 +238,67 @@ var Game = (function() {
         "messagePara",
         currentPlayer.name + ": You landed on start. Here's an extra $100"
       );
-    } else if (currentSquareObj.owner == "For Sale") {
-      //If the property is unowned, allow purchase:
-      //check if owner can afford this square
-      if (currentPlayer.cash <= currentSquareObj.value) {
-        updateByID(
-          "messagePara",
-          currentPlayer.name +
-            ": Sorry, you can't afford to purchase this property"
-        );
-        return;
-      }
+    } 
+    // else if (currentSquareObj.owner == "For Sale") {
+    //   //If the property is unowned, allow purchase:
+    //   //check if owner can afford this square
+    //   if (currentPlayer.cash <= currentSquareObj.value) {
+    //     updateByID(
+    //       "messagePara",
+    //       currentPlayer.name +
+    //         ": Sorry, you can't afford to purchase this property"
+    //     );
+    //     return;
+    //   }
 
-      //prompt to buy tile
-      var purchase = window.confirm(
-        currentPlayer.name +
-          ": This property is unowned. Would you like to purchase this property for $" +
-          currentSquareObj.value +
-          "?"
-      );
-      //if player chooses to purchase, update properties:
-      if (purchase) {
-        //update ownder of current square
-        currentSquareObj.owner = currentPlayer.id;
-        //update cash in the player object
-        currentPlayer.updateCash(currentPlayer.cash - currentSquareObj.value);
-        //log a message to the game board
-        updateByID(
-          "messagePara",
-          currentPlayer.name + ": you now have $" + currentPlayer.cash
-        );
-        //update the owner listed on the board
-        updateByID(
-          currentSquareObj.squareID + "-owner",
-          "Owner: " + game.players[game.currentPlayer].name
-        );
-      }
-    } else if (currentSquareObj.owner == currentPlayer.id) {
-      //if property is owned by current player, continue
-      updateByID(
-        "messagePara",
-        currentPlayer.name + ": You own this property. Thanks for visiting!"
-      );
-    } else {
-      //charge rent
-      updateByID(
-        "messagePara",
-        currentPlayer.name +
-          ": This property is owned by " +
-          currentSquareObj.owner +
-          ". You owe $" +
-          currentSquareObj.rent +
-          ". You now have $" +
-          currentPlayer.cash
-      );
+    //   //prompt to buy tile
+    //   var purchase = window.confirm(
+    //     currentPlayer.name +
+    //       ": This property is unowned. Would you like to purchase this property for $" +
+    //       currentSquareObj.value +
+    //       "?"
+    //   );
+    //   //if player chooses to purchase, update properties:
+    //   if (purchase) {
+    //     //update ownder of current square
+    //     currentSquareObj.owner = currentPlayer.id;
+    //     //update cash in the player object
+    //     currentPlayer.updateCash(currentPlayer.cash - currentSquareObj.value);
+    //     //log a message to the game board
+    //     updateByID(
+    //       "messagePara",
+    //       currentPlayer.name + ": you now have $" + currentPlayer.cash
+    //     );
+    //     //update the owner listed on the board
+    //     updateByID(
+    //       currentSquareObj.squareID + "-owner",
+    //       "Owner: " + game.players[game.currentPlayer].name
+    //     );
+    //   }
+    // } else if (currentSquareObj.owner == currentPlayer.id) {
+    //   //if property is owned by current player, continue
+    //   updateByID(
+    //     "messagePara",
+    //     currentPlayer.name + ": You own this property. Thanks for visiting!"
+    //   );
+    // } else {
+    //   //charge rent
+    //   updateByID(
+    //     "messagePara",
+    //     currentPlayer.name +
+    //       ": This property is owned by " +
+    //       currentSquareObj.owner +
+    //       ". You owe $" +
+    //       currentSquareObj.rent +
+    //       ". You now have $" +
+    //       currentPlayer.cash
+    //   );
 
-      var owner = game.players.filter(function(player) {
-        return player.id == currentSquareObj.owner;
-      });
-      currentPlayer.updateCash(currentPlayer.cash - currentSquareObj.rent);
-    }
+    //   var owner = game.players.filter(function(player) {
+    //     return player.id == currentSquareObj.owner;
+    //   });
+    //   currentPlayer.updateCash(currentPlayer.cash - currentSquareObj.rent);
+    // }
   }
 
   //function to update inner HTML based on element ID
