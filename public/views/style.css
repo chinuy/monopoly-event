@@ -31,6 +31,11 @@ div {
   padding: .5em;
 }
 
+.cell img {
+  max-height: 80%;
+  max-width: 80%;
+}
+
 .square-name {
   font-weight: bold;
 }

@@ -42,24 +42,25 @@ var Game = (function() {
   //there are 11 properties on the game board.
   //each has a unique name and value, so each will probably need to be built individually (not through a loop)
   game.squares = [
-    new Square("Basset Hound Ave.", 100, "square2"),
-    new Square("Great Dane Street", 150, "square3"),
-    new Square("Poodle Highway", 200, "square4"),
-    new Square("Bull Terrier Way", 250, "square5"),
-    new Square("Retriever Road", 300, "square6"),
-    new Square("German Shepard Road", 350, "square7"),
-    new Square("Greyhound Gap", 400, "square8"),
-    new Square("Whippet Way", 450, "square9"),
-    new Square("Labrador Lane", 500, "square10"),
-    new Square("Beagle Blvd.", 550, "square11"),
-    new Square("Walker Hound Way", 600, "square12")
+    new Square("Start", 100, "square1", "card/start"),
+    new Square("Basset Hound Ave.", 100, "square2", "card/question"),
+    new Square("Great Dane Street", 150, "square3", "building/canes"),
+    new Square("Geography question", 200, "square4", "building/geo_2"),
+    new Square("Geography question", 250, "square5", "building/geo_1"),
+    new Square("Retriever Road", 300, "square6", "building/dennys"),
+    new Square("German Shepard Road", 350, "square7", "building/mcalisters"),
+    new Square("Greyhound Gap", 400, "square8", "building/jimmy"),
+    new Square("Whippet Way", 450, "square9", "building/ihop"),
+    new Square("Labrador Lane", 500, "square10", "building/roadhouse"),
+    new Square("Beagle Blvd.", 550, "square11", "building/rudys"),
+    new Square("Walker Hound Way", 600, "square12", "building/whatta")
   ];
 
   //build an array of players
   //note: initial version of the game only allows two fixed players
   game.players = [
     new Player("Stan", 1000, "Triangle", "player1"),
-    new Player("Ike", 1000, "Circle", "player2")
+    new Player("Nick", 1000, "Circle", "player2")
   ];
 
   //set the game property for current player. Initially player 1. (Using an index of the game.players array.)
@@ -77,11 +78,11 @@ var Game = (function() {
       //updated here and I can use the same method to create and update
       var squareName = document.getElementById(id + "-name");
       var squareValue = document.getElementById(id + "-value");
-      var squareOwner = document.getElementById(id + "-owner");
+      var squareImage = document.getElementById(id + "-image");
 
       squareName.innerHTML = this.squares[i].name;
       squareValue.innerHTML = "$" + this.squares[i].value;
-      squareOwner.innerHTML = this.squares[i].owner;
+      squareImage.src = "../images/" + this.squares[i].image + ".png";
     }
 
     //find the start square and add all players
@@ -256,7 +257,7 @@ var Game = (function() {
   /****                       Constructor functions                             *****/
 
   /*constructor function for properties (game board squares)*/
-  function Square(name, value, squareID) {
+  function Square(name, value, squareID, image) {
     //what is this property called?
     this.name = name;
     //what's the value/initial purchase price?
@@ -267,6 +268,8 @@ var Game = (function() {
     this.squareID = squareID;
     //who owns the property? (initially unowned)
     this.owner = "For Sale";
+
+    this.image = image;
   }
 
   /*constructor function for players*/
