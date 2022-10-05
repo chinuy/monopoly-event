@@ -44,18 +44,23 @@ var Game = (function() {
 
   blocks = [
     {name: "Start", image: "card/start"},
+    {name: "Wisdom", image: "building/loscucos"},
     {name: "Geography", image: "building/geo_3"},
     {name: "Wisdom", image: "building/jimmy"},
     {name: "Geography", image: "building/geo_2"},
     {name: "Wisdom", image: "building/roadhouse"},
+    {name: "Chance", image: "card/question"},
     {name: "Logo King", image: "building/canes"},
     {name: "Geography", image: "building/geo_1"},
-    {name: "Wisdom", image: "building/dennys"},
     {name: "Chance", image: "card/question"},
     {name: "Wisdom", image: "building/whatta"},
+    {name: "Chance", image: "card/question"},
     {name: "Logo King", image: "building/ihop"},
     {name: "Wisdom", image: "building/rudys"},
+    {name: "Logo King", image: "building/mcalisters"},
+    {name: "Geography", image: "building/geo_4"},
   ]
+  console.log(blocks.length + " blocks info defined")
 
   game.squares = blocks.map( (block, i) => new Square(block.name, 100, "square" + (i+1), block.image))
 
@@ -71,6 +76,31 @@ var Game = (function() {
 
   //set up a method that will add the squares to the game board
   game.populateBoard = function() {
+    const gameBoard = document.getElementById("game_board")
+    const ROW = 6
+    const COL = 4
+    let num = 0
+    for (let i = 0; i < COL; i++) {
+      let rowHtml = ""
+      for (let j = 0; j < ROW; j++) {
+        if(i > 0 && i < COL-1 && j > 0 && j < ROW-1) {
+          rowHtml += `
+          <div class="cell middle"></div>
+          `
+        } else {
+          num += 1;
+          rowHtml += `
+        <div class="cell square" id="square${num}">
+          <p id="square${num}-name" class="square-name"></p>
+          <p id="square${num}-value"></p>
+          <img id="square${num}-image"></img>
+          <p id="square${num}-residents"></p>
+        </div>
+        `;
+        }
+      }
+      gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`
+    }
     //loop through all the squares in the game board
     for (var i = 0; i < this.squares.length; i++) {
       //get square ID from object and then find its div
