@@ -338,7 +338,7 @@ var Game = (function() {
   //Adding it as a prototype of the Player constructor function
   Player.prototype.createToken = function(square) {
     var playerSpan = document.createElement("span");
-    playerSpan.setAttribute("class", this.token);
+    playerSpan.setAttribute("class", this.token + " " + this.id + "-token");
     playerSpan.setAttribute("id", this.id);
     square.appendChild(playerSpan);
   };
@@ -351,3 +351,11 @@ var Game = (function() {
 
   return game;
 })();
+
+function on() {
+  document.getElementById("overlay").style.display = "block";
+}
+
+function off() {
+  document.getElementById("overlay").style.display = "none";
+}
