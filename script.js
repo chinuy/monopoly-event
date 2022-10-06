@@ -23,6 +23,24 @@
  5. no mortgages
 */
 
+const geo_problem = [
+  "geo/Amazon Rainforest.jpg",
+  "geo/Angkor Wat.jpg",
+  "geo/Easter Island.jpg",
+  "geo/Grand Canyon.jpg",
+  "geo/Great Barrier Reef.jpg",
+  "geo/Great Pyramids of Giza.jpg",
+  "geo/Great Wall.jpg",
+  "geo/Louvre Museum.jpg",
+  "geo/Machu Picchu.jpg",
+  "geo/Mesa Verde.jpg",
+  "geo/Mount Rushmore Monument.jpg",
+  "geo/Parthenon.jpg",
+  "geo/Pompeii.jpg",
+  "geo/Taj Mahal.jpg",
+  "geo/Tikal.JPG",
+];
+
 window.onload = function() {
   //find dice role button and bind takeTurn method
   var rollButton = document.getElementById("rollButton");
@@ -154,6 +172,7 @@ var Game = (function() {
   //advance the player
   //call function to either allow purchase or charge rent
   game.takeTurn = function() {
+    off();
     //roll dice and advance player
     movePlayer();
 
@@ -230,6 +249,11 @@ var Game = (function() {
     var currentSquareObj = game.squares.filter(function(square) {
       return square.squareID == currentSquareId;
     })[0];
+
+    on()
+    setTimeout(() => {
+      off()
+    }, 5000);
 
     //check if the player landed on start
     if (currentSquareId == "square1") {
@@ -354,8 +378,11 @@ var Game = (function() {
 
 function on() {
   document.getElementById("overlay").style.display = "block";
+  document.getElementById("info").style.display = "block";
+  document.getElementById("info-img").src = "images/" + geo_problem[Math.floor(Math.random() * geo_problem.length)];
 }
 
 function off() {
   document.getElementById("overlay").style.display = "none";
+  document.getElementById("info").style.display = "none";
 }
