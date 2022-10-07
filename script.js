@@ -8,7 +8,7 @@
 	  but I'm mostly calling them Squares to avoid confusion with object properties).
 	  These store value, rent, name, etc.
 	Player objects, representing the different players in the game. These store name,
-	  cash, ID, etc.
+	  point, ID, etc.
  These objects are created at the beginning of the game (within the Game object)
  and are updated as the game progresses.
 
@@ -86,7 +86,9 @@ var Game = (function() {
   //note: initial version of the game only allows two fixed players
   game.players = [
     new Player("Stan", 1000, "Triangle", "player1"),
-    new Player("Nick", 1000, "Circle", "player2")
+    new Player("Nick", 1000, "Circle", "player2"),
+    new Player("Kelly", 1000, "Circle", "player3"),
+    new Player("Kevin", 1000, "Triangle", "player4")
   ];
 
   //set the game property for current player. Initially player 1. (Using an index of the game.players array.)
@@ -162,9 +164,13 @@ var Game = (function() {
 
     //populate the info panel (using simple private function)
     updateByID("player1-info_name", game.players[0].name);
-    updateByID("player1-info_cash", game.players[0].cash);
+    updateByID("player1-info_point", game.players[0].point);
     updateByID("player2-info_name", game.players[1].name);
-    updateByID("player2-info_cash", game.players[1].cash);
+    updateByID("player2-info_point", game.players[1].point);
+    updateByID("player3-info_name", game.players[2].name);
+    updateByID("player3-info_point", game.players[2].point);
+    updateByID("player4-info_name", game.players[3].name);
+    updateByID("player4-info_point", game.players[3].point);
   };
 
   //public function to handle taking of turn. Should:
@@ -183,7 +189,7 @@ var Game = (function() {
 
     //loss condition:
     //if current player drops below $0, they've lost
-    if (game.players[game.currentPlayer].cash < 0) {
+    if (game.players[game.currentPlayer].point < 0) {
       alert("Sorry " + game.players[game.currentPlayer].name + ", you lose!");
     }
 
@@ -224,7 +230,7 @@ var Game = (function() {
       var nextSquare = currentSquare + moves;
     } else {
       var nextSquare = currentSquare + moves - totalSquares;
-      currentPlayer.updateCash(currentPlayer.cash + 100);
+      currentPlayer.updatepoint(currentPlayer.point + 100);
       console.log("$100 for passing start");
     }
 
@@ -261,7 +267,7 @@ var Game = (function() {
 
     //check if the player landed on start
     if (currentSquareId == "square1") {
-      currentPlayer.updateCash(currentPlayer.cash + 100);
+      currentPlayer.updatepoint(currentPlayer.point + 100);
       updateByID(
         "messagePara",
         currentPlayer.name + ": You landed on start. Here's an extra $100"
@@ -270,7 +276,7 @@ var Game = (function() {
     // else if (currentSquareObj.owner == "For Sale") {
     //   //If the property is unowned, allow purchase:
     //   //check if owner can afford this square
-    //   if (currentPlayer.cash <= currentSquareObj.value) {
+    //   if (currentPlayer.point <= currentSquareObj.value) {
     //     updateByID(
     //       "messagePara",
     //       currentPlayer.name +
@@ -290,12 +296,12 @@ var Game = (function() {
     //   if (purchase) {
     //     //update ownder of current square
     //     currentSquareObj.owner = currentPlayer.id;
-    //     //update cash in the player object
-    //     currentPlayer.updateCash(currentPlayer.cash - currentSquareObj.value);
+    //     //update point in the player object
+    //     currentPlayer.updatepoint(currentPlayer.point - currentSquareObj.value);
     //     //log a message to the game board
     //     updateByID(
     //       "messagePara",
-    //       currentPlayer.name + ": you now have $" + currentPlayer.cash
+    //       currentPlayer.name + ": you now have $" + currentPlayer.point
     //     );
     //     //update the owner listed on the board
     //     updateByID(
@@ -319,13 +325,13 @@ var Game = (function() {
     //       ". You owe $" +
     //       currentSquareObj.rent +
     //       ". You now have $" +
-    //       currentPlayer.cash
+    //       currentPlayer.point
     //   );
 
     //   var owner = game.players.filter(function(player) {
     //     return player.id == currentSquareObj.owner;
     //   });
-    //   currentPlayer.updateCash(currentPlayer.cash - currentSquareObj.rent);
+    //   currentPlayer.updatepoint(currentPlayer.point - currentSquareObj.rent);
     // }
   }
 
@@ -353,9 +359,9 @@ var Game = (function() {
   }
 
   /*constructor function for players*/
-  function Player(name, cash, token, id) {
+  function Player(name, point, token, id) {
     this.name = name;
-    this.cash = cash;
+    this.point = point;
     this.token = token;
     this.id = id;
     this.currentSquare = "square1";
@@ -371,10 +377,10 @@ var Game = (function() {
     square.appendChild(playerSpan);
   };
 
-  //method to update the amount of cash a player has
-  Player.prototype.updateCash = function(amount) {
-    document.getElementById(this.id + "-info_cash").innerHTML = amount;
-    this.cash = amount;
+  //method to update the amount of point a player has
+  Player.prototype.updatepoint = function(amount) {
+    document.getElementById(this.id + "-info_point").innerHTML = amount;
+    this.point = amount;
   };
 
   return game;

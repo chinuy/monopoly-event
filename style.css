@@ -28,6 +28,16 @@ div {
   position: relative;
 }
 
+.player-info {
+  outline: .25em solid white;
+  background-color: lightblue;
+  display: table-cell;
+  text-align: center;
+  padding: .5em;
+  position: relative;
+  background-color: white;
+}
+
 .cell img {
   max-height: 80%;
   max-width: 80%;
@@ -77,22 +87,58 @@ div {
   margin: 0;
   width: 20px;
   height: 20px;
-  background: darkblue;
+  background: yellow;
   -moz-border-radius: 50px;
   -webkit-border-radius: 50px;
   border-radius: 50px;
 }
 
+#player3-info_token {
+  display: inline-block;
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  background: green;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+}
+
+#player4-info_token {
+  display: inline-block;
+  margin: 0;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid purple;
+}
+
 .player1-token {
   position: absolute;
-  top: 7em;
+  top: 6em;
   left: 1em;
 }
 
 .player2-token {
   position: absolute;
-  top: 7em;
+  top: 6em;
   left: 4em;
+  background: yellow;
+}
+
+.player3-token {
+  position: absolute;
+  top: 9em;
+  left: 1em;
+  background: green;
+}
+
+.player4-token {
+  position: absolute;
+  top: 9em;
+  left: 4em;
+  border-bottom: 40px solid purple;
 }
 
 #overlay {
