@@ -24,21 +24,21 @@
 */
 
 const geo_problem = [
-  "geo/Amazon Rainforest.jpg",
-  "geo/Angkor Wat.jpg",
-  "geo/Easter Island.jpg",
-  "geo/Grand Canyon.jpg",
-  "geo/Great Barrier Reef.jpg",
-  "geo/Great Pyramids of Giza.jpg",
-  "geo/Great Wall.jpg",
-  "geo/Louvre Museum.jpg",
-  "geo/Machu Picchu.jpg",
-  "geo/Mesa Verde.jpg",
-  "geo/Mount Rushmore Monument.jpg",
-  "geo/Parthenon.jpg",
-  "geo/Pompeii.jpg",
-  "geo/Taj Mahal.jpg",
-  "geo/Tikal.JPG",
+  { img: "geo/Amazon Rainforest.jpg", ans: "Amazon Rainforest" },
+  { img: "geo/Angkor Wat.jpg", ans: "Angkor Wat" },
+  { img: "geo/Easter Island.jpg", ans: "Easter Island" },
+  { img: "geo/Grand Canyon.jpg", ans: "Grand Canyon" },
+  { img: "geo/Great Barrier Reef.jpg", ans: "Great Barrier Reef" },
+  { img: "geo/Great Pyramids of Giza.jpg", ans: "Great Pyramids of Giza" },
+  { img: "geo/Great Wall.jpg", ans: "Great Wall" },
+  { img: "geo/Louvre Museum.jpg", ans: "Louvre Museum" },
+  { img: "geo/Machu Picchu.jpg", ans: "Machu Picchu" },
+  { img: "geo/Mesa Verde.jpg", ans: "Mesa Verde" },
+  { img: "geo/Mount Rushmore Monument.jpg", ans: "Mount Rushmore Monument" },
+  { img: "geo/Parthenon.jpg", ans: "Parthenon" },
+  { img: "geo/Pompeii.jpg", ans: "Pompeii" },
+  { img: "geo/Taj Mahal.jpg", ans: "Taj Mahal" },
+  { img: "geo/Tikal.jpg", ans: "Tikal" },
 ];
 
 window.onload = function() {
@@ -250,9 +250,13 @@ var Game = (function() {
       return square.squareID == currentSquareId;
     })[0];
 
+    // for demo
     on()
     setTimeout(() => {
-      off()
+      showAns();
+      setTimeout(() => {
+        off()
+      }, 3000)
     }, 5000);
 
     //check if the player landed on start
@@ -379,10 +383,17 @@ var Game = (function() {
 function on() {
   document.getElementById("overlay").style.display = "block";
   document.getElementById("info").style.display = "block";
-  document.getElementById("info-img").src = "images/" + geo_problem[Math.floor(Math.random() * geo_problem.length)];
+  const problem = geo_problem[Math.floor(Math.random() * geo_problem.length)];
+  document.getElementById("info-img").src = "images/" + problem.img;
+  document.getElementById("info-ans").innerText = problem.ans;
+}
+
+function showAns() {
+  document.getElementById("info-ans").style.display = "block";
 }
 
 function off() {
   document.getElementById("overlay").style.display = "none";
   document.getElementById("info").style.display = "none";
+  document.getElementById("info-ans").style.display = "none";
 }

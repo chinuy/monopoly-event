@@ -124,3 +124,8 @@ div {
 #info img {
   max-height: 60%;
 }
+
+#info-ans {
+  background-image: url("images/card/geo_back.png");
+  display: none;
+}
