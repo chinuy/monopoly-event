@@ -106,7 +106,6 @@ div {
   bottom: 0;
   background-color: rgba(0,0,0,0.5);
   z-index: 2;
-  cursor: pointer;
 }
 
 #info {
@@ -114,7 +113,7 @@ div {
   height: 380px;
   position: absolute;
   display: none;
-  /* background-color: rgba(0,0,255,0.5); */
+  background-color: rgb(240, 241, 230);
   top: 25%;
   left: 16%;
   z-index: 10;
@@ -123,5 +122,5 @@ div {
 }
 
 #info img {
-  max-height: 80%;
+  max-height: 60%;
 }
