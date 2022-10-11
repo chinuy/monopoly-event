@@ -161,6 +161,18 @@ var Game = (function() {
       //using private function to create tokens
       game.players[i].createToken(square1);
     }
+    
+    const info = document.getElementById("player-info")
+    for (let i = 1 ; i < game.players.length + 1; i++) {
+      info.innerHTML += `
+      <div class="player-info" id="player${i}-info">
+        <p>Player ${i}</p>
+        <p id="player${i}-info_name">name</p>
+        <p id="player${i}-info_token"></p>
+        <p id="player${i}-info_point">point</p>
+      </div>
+      `
+    }
 
     //populate the info panel (using simple private function)
     updateByID("player1-info_name", game.players[0].name);
