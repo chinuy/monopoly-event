@@ -22,6 +22,16 @@
  4. no houses or hotels
  5. no mortgages
 */
+/*
+TODO sessionStorage
+TODO remote control
+TODO move score in the center
+TODO animated score
+TODO animated moving
+*/
+Array.prototype.sample = function(){
+  return this[Math.floor(Math.random()*this.length)];
+}
 
 const geo_problem = [
   { img: "geo/Amazon Rainforest.jpg", ans: "Amazon Rainforest" },
@@ -41,9 +51,23 @@ const geo_problem = [
   { img: "geo/Tikal.jpg", ans: "Tikal" },
 ];
 
+let CHANCE_IDX = 0
+const chance_cards = [
+  { img: "card/run.jpg", title: "暴走卡", description: "往前6步", fn: (players, curr) => { movePlayer(6, curr) }}, // odd
+  { img: "card/tax.jpg", title: "查稅卡", description: "失去$300分", fn: (players, curr) => {curr.reducepoint(300)}},
+  { img: "card/angel.jpg", title: "天使卡", description: "得到$300分", fn: (players, curr) => {curr.incrpoint(300)}},
+  { img: "card/equal_prosperity.jpg", title: "均富卡", description: "所有人點數平分。", fn: (players, curr) => { 
+    let new_point = Math.ceil(players.reduce((pSum, a) => pSum + a.point, 0) / players.length); players.forEach(player => player.updatepoint(new_point)) }},
+  { img: "card/rober.jpg", title: "搶奪卡", description: "搶得最高分玩家$600分", fn: (players, curr) => { 
+    const high_point = Math.max(...players.filter(p => p.id != curr.id).map(p => p.point), 0); players.filter(p=> p.point == high_point & (p.id != curr.id)).sample().reducepoint(600); curr.incrpoint(600) } },
+]
+
 window.onload = function() {
   //find dice role button and bind takeTurn method
-  var rollButton = document.getElementById("rollButton");
+  const rollButton = document.getElementById("rollButton");
+  const yesButton = document.getElementById("rollButton");
+  const noButton = document.getElementById("rollButton");
+
   rollButton.onclick = Game.takeTurn;
 
   //initialize board
@@ -63,8 +87,10 @@ var Game = (function() {
   blocks = [
     {name: "Start", image: "card/start"},
     {name: "Wisdom", image: "building/loscucos"},
-    {name: "Geography", image: "building/geo_3"},
-    {name: "Wisdom", image: "building/jimmy"},
+    {name: "Chance", image: "card/question"},
+    {name: "Chance", image: "card/question"},
+    // {name: "Geography", image: "building/geo_3"},
+    // {name: "Wisdom", image: "building/jimmy"},
     {name: "Geography", image: "building/geo_2"},
     {name: "Wisdom", image: "building/roadhouse"},
     {name: "Chance", image: "card/question"},
@@ -74,8 +100,10 @@ var Game = (function() {
     {name: "Wisdom", image: "building/whatta"},
     {name: "Chance", image: "card/question"},
     {name: "Logo King", image: "building/ihop"},
-    {name: "Wisdom", image: "building/rudys"},
-    {name: "Logo King", image: "building/mcalisters"},
+    {name: "Chance", image: "card/question"},
+    {name: "Chance", image: "card/question"},
+    // {name: "Wisdom", image: "building/rudys"},
+    // {name: "Logo King", image: "building/mcalisters"},
     {name: "Geography", image: "building/geo_4"},
   ]
   console.log(blocks.length + " blocks info defined")
@@ -167,43 +195,33 @@ var Game = (function() {
       info.innerHTML += `
       <div class="player-info" id="player${i}-info">
         <p>Player ${i}</p>
-        <p id="player${i}-info_name">name</p>
+        <p id="player${i}-info_name">${game.players[i-1].name}</p>
         <p id="player${i}-info_token"></p>
-        <p id="player${i}-info_point">point</p>
+        <p id="player${i}-info_point">${game.players[i-1].point}</p>
       </div>
       `
     }
-
-    //populate the info panel (using simple private function)
-    updateByID("player1-info_name", game.players[0].name);
-    updateByID("player1-info_point", game.players[0].point);
-    updateByID("player2-info_name", game.players[1].name);
-    updateByID("player2-info_point", game.players[1].point);
-    updateByID("player3-info_name", game.players[2].name);
-    updateByID("player3-info_point", game.players[2].point);
-    updateByID("player4-info_name", game.players[3].name);
-    updateByID("player4-info_point", game.players[3].point);
   };
 
   //public function to handle taking of turn. Should:
   //roll the dice
   //advance the player
   //call function to either allow purchase or charge rent
-  game.takeTurn = function() {
+  game.takeTurn = async function() {
     off();
     //roll dice and advance player
-    movePlayer();
+    movePlayer(Math.floor(Math.random() * (4 - 1) + 1), game.players[game.currentPlayer]);
 
     //check the tile the player landed on
     //if the tile is not owned, prompt player to buy
     //if the tile is owned, charge rent and move on
-    checkTile();
+    await checkTile();
 
     //loss condition:
     //if current player drops below $0, they've lost
-    if (game.players[game.currentPlayer].point < 0) {
-      alert("Sorry " + game.players[game.currentPlayer].name + ", you lose!");
-    }
+    // if (game.players[game.currentPlayer].point < 0) {
+    //   alert("Sorry " + game.players[game.currentPlayer].name + ", you lose!");
+    // }
 
     //advance to next player
     game.currentPlayer = nextPlayer(game.currentPlayer);
@@ -217,7 +235,6 @@ var Game = (function() {
   //(leaving this as a private function rather than method of Player because
   //current player is more of a game level property than a player level property)
   function nextPlayer(currentPlayer) {
-    console.log(currentPlayer, game.players)
     var nextPlayer = currentPlayer + 1;
 
     if (nextPlayer == game.players.length) {
@@ -228,13 +245,11 @@ var Game = (function() {
   }
 
   //function to "roll the dice" and advance the player to the appropriate square
-  function movePlayer() {
+  function movePlayer(moves, currentPlayer) {
     //"dice roll". Should be between 1 and 4
-    var moves = Math.floor(Math.random() * (4 - 1) + 1);
     //need the total number of squares, adding 1 because start isn't included in the squares array
     var totalSquares = game.squares.length;
     //get the current player and the square he's on
-    var currentPlayer = game.players[game.currentPlayer];
     var currentSquare = parseInt(currentPlayer.currentSquare.slice(6));
 
     //figure out if the roll will put player past start. If so, reset and give money for passing start
@@ -242,8 +257,8 @@ var Game = (function() {
       var nextSquare = currentSquare + moves;
     } else {
       var nextSquare = currentSquare + moves - totalSquares;
-      currentPlayer.updatepoint(currentPlayer.point + 100);
-      console.log("$100 for passing start");
+      currentPlayer.updatepoint(currentPlayer.point + 500);
+      console.log("$500 for passing start");
     }
 
     //update current square in object (the string "square" plus the index of the next square)
@@ -262,20 +277,12 @@ var Game = (function() {
   //function that checks the tile the player landed on and allows the player to act appropriately
   //(buy, pay rent, or move on if owned)
   function checkTile() {
+    return new Promise((resolve) => {
     var currentPlayer = game.players[game.currentPlayer];
     var currentSquareId = currentPlayer.currentSquare;
     var currentSquareObj = game.squares.filter(function(square) {
       return square.squareID == currentSquareId;
     })[0];
-
-    // for demo
-    on()
-    setTimeout(() => {
-      showAns();
-      setTimeout(() => {
-        off()
-      }, 3000)
-    }, 5000);
 
     //check if the player landed on start
     if (currentSquareId == "square1") {
@@ -284,68 +291,14 @@ var Game = (function() {
         "messagePara",
         currentPlayer.name + ": You landed on start. Here's an extra $100"
       );
-    } 
-    // else if (currentSquareObj.owner == "For Sale") {
-    //   //If the property is unowned, allow purchase:
-    //   //check if owner can afford this square
-    //   if (currentPlayer.point <= currentSquareObj.value) {
-    //     updateByID(
-    //       "messagePara",
-    //       currentPlayer.name +
-    //         ": Sorry, you can't afford to purchase this property"
-    //     );
-    //     return;
-    //   }
-
-    //   //prompt to buy tile
-    //   var purchase = window.confirm(
-    //     currentPlayer.name +
-    //       ": This property is unowned. Would you like to purchase this property for $" +
-    //       currentSquareObj.value +
-    //       "?"
-    //   );
-    //   //if player chooses to purchase, update properties:
-    //   if (purchase) {
-    //     //update ownder of current square
-    //     currentSquareObj.owner = currentPlayer.id;
-    //     //update point in the player object
-    //     currentPlayer.updatepoint(currentPlayer.point - currentSquareObj.value);
-    //     //log a message to the game board
-    //     updateByID(
-    //       "messagePara",
-    //       currentPlayer.name + ": you now have $" + currentPlayer.point
-    //     );
-    //     //update the owner listed on the board
-    //     updateByID(
-    //       currentSquareObj.squareID + "-owner",
-    //       "Owner: " + game.players[game.currentPlayer].name
-    //     );
-    //   }
-    // } else if (currentSquareObj.owner == currentPlayer.id) {
-    //   //if property is owned by current player, continue
-    //   updateByID(
-    //     "messagePara",
-    //     currentPlayer.name + ": You own this property. Thanks for visiting!"
-    //   );
-    // } else {
-    //   //charge rent
-    //   updateByID(
-    //     "messagePara",
-    //     currentPlayer.name +
-    //       ": This property is owned by " +
-    //       currentSquareObj.owner +
-    //       ". You owe $" +
-    //       currentSquareObj.rent +
-    //       ". You now have $" +
-    //       currentPlayer.point
-    //   );
-
-    //   var owner = game.players.filter(function(player) {
-    //     return player.id == currentSquareObj.owner;
-    //   });
-    //   currentPlayer.updatepoint(currentPlayer.point - currentSquareObj.rent);
-    // }
-  }
+    }  else if (currentSquareObj.name == "Chance") {
+      const card = chance_cards[CHANCE_IDX++ % chance_cards.length]
+      display(card)
+      showAns()
+      card.fn(game.players, currentPlayer)
+    }
+    resolve()
+  })}
 
   //function to update inner HTML based on element ID
   function updateByID(id, msg) {
@@ -389,6 +342,16 @@ var Game = (function() {
     square.appendChild(playerSpan);
   };
 
+
+  Player.prototype.incrpoint = function(amount) {
+    this.updatepoint(this.point + amount)
+  }
+
+  Player.prototype.reducepoint = function(amount) {
+    const new_point = this.point > amount? this.point - amount : 0;
+    this.updatepoint(new_point);
+  }
+
   //method to update the amount of point a player has
   Player.prototype.updatepoint = function(amount) {
     document.getElementById(this.id + "-info_point").innerHTML = amount;
@@ -398,12 +361,13 @@ var Game = (function() {
   return game;
 })();
 
-function on() {
+function display(card) {
   document.getElementById("overlay").style.display = "block";
   document.getElementById("info").style.display = "block";
-  const problem = geo_problem[Math.floor(Math.random() * geo_problem.length)];
-  document.getElementById("info-img").src = "images/" + problem.img;
-  document.getElementById("info-ans").innerText = problem.ans;
+  // const problem = geo_problem[Math.floor(Math.random() * geo_problem.length)];
+  document.getElementById("info-title").innerText = card.title;
+  document.getElementById("info-img").src = "images/" + card.img;
+  document.getElementById("info-ans").innerText = card.description;
 }
 
 function showAns() {
