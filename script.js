@@ -33,27 +33,31 @@ Array.prototype.sample = function(){
   return this[Math.floor(Math.random()*this.length)];
 }
 
+const idx = {
+  geo: 0,
+  chance: 0
+}
+
 const geo_problem = [
-  { img: "geo/Amazon Rainforest.jpg", ans: "Amazon Rainforest" },
-  { img: "geo/Angkor Wat.jpg", ans: "Angkor Wat" },
-  { img: "geo/Easter Island.jpg", ans: "Easter Island" },
-  { img: "geo/Grand Canyon.jpg", ans: "Grand Canyon" },
-  { img: "geo/Great Barrier Reef.jpg", ans: "Great Barrier Reef" },
-  { img: "geo/Great Pyramids of Giza.jpg", ans: "Great Pyramids of Giza" },
-  { img: "geo/Great Wall.jpg", ans: "Great Wall" },
-  { img: "geo/Louvre Museum.jpg", ans: "Louvre Museum" },
-  { img: "geo/Machu Picchu.jpg", ans: "Machu Picchu" },
-  { img: "geo/Mesa Verde.jpg", ans: "Mesa Verde" },
-  { img: "geo/Mount Rushmore Monument.jpg", ans: "Mount Rushmore Monument" },
-  { img: "geo/Parthenon.jpg", ans: "Parthenon" },
-  { img: "geo/Pompeii.jpg", ans: "Pompeii" },
-  { img: "geo/Taj Mahal.jpg", ans: "Taj Mahal" },
-  { img: "geo/Tikal.jpg", ans: "Tikal" },
+  { img: "geo/Amazon Rainforest.jpg", title: "地理題", description: "Amazon Rainforest" },
+  { img: "geo/Angkor Wat.jpg", title: "地理題", description: "Angkor Wat" },
+  { img: "geo/Easter Island.jpg", title: "地理題", description: "Easter Island" },
+  { img: "geo/Grand Canyon.jpg", title: "地理題", description: "Grand Canyon" },
+  { img: "geo/Great Barrier Reef.jpg", title: "地理題", description: "Great Barrier Reef" },
+  { img: "geo/Great Pyramids of Giza.jpg", title: "地理題", description: "Great Pyramids of Giza" },
+  { img: "geo/Great Wall.jpg", title: "地理題", description: "Great Wall" },
+  { img: "geo/Louvre Museum.jpg", title: "地理題", description: "Louvre Museum" },
+  { img: "geo/Machu Picchu.jpg", title: "地理題", description: "Machu Picchu" },
+  { img: "geo/Mesa Verde.jpg", title: "地理題", description: "Mesa Verde" },
+  { img: "geo/Mount Rushmore Monument.jpg", title: "地理題", description: "Mount Rushmore Monument" },
+  { img: "geo/Parthenon.jpg", title: "地理題", description: "Parthenon" },
+  { img: "geo/Pompeii.jpg", title: "地理題", description: "Pompeii" },
+  { img: "geo/Taj Mahal.jpg", title: "地理題", description: "Taj Mahal" },
+  { img: "geo/Tikal.jpg", title: "地理題", description: "Tikal" },
 ];
 
-let CHANCE_IDX = 0
 const chance_cards = [
-  { img: "card/run.jpg", title: "暴走卡", description: "往前6步", fn: (players, curr) => { movePlayer(6, curr) }}, // odd
+  { img: "card/run.jpg", title: "暴走卡", description: "往前6步", fn: (players, curr) => { Game.movePlayer(1, curr) }}, // odd
   { img: "card/tax.jpg", title: "查稅卡", description: "失去$300分", fn: (players, curr) => {curr.reducepoint(300)}},
   { img: "card/fortune_god.jpg", title: "福神卡", description: "得到$900分", fn: (players, curr) => {curr.incrpoint(900)}},
   { img: "card/Poor God.jpg", title: "窮神卡", description: "失去$900分", fn: (players, curr) => {curr.reducepoint(900)}},
@@ -212,7 +216,7 @@ var Game = (function() {
   game.takeTurn = async function() {
     off();
     //roll dice and advance player
-    movePlayer(Math.floor(Math.random() * (4 - 1) + 1), game.players[game.currentPlayer]);
+    game.movePlayer(Math.floor(Math.random() * (4 - 1) + 1), game.players[game.currentPlayer]);
 
     //check the tile the player landed on
     //if the tile is not owned, prompt player to buy
@@ -247,7 +251,7 @@ var Game = (function() {
   }
 
   //function to "roll the dice" and advance the player to the appropriate square
-  function movePlayer(moves, currentPlayer) {
+  game.movePlayer = function(moves, currentPlayer) {
     //"dice roll". Should be between 1 and 4
     //need the total number of squares, adding 1 because start isn't included in the squares array
     var totalSquares = game.squares.length;
@@ -294,10 +298,15 @@ var Game = (function() {
         currentPlayer.name + ": You landed on start. Here's an extra $100"
       );
     }  else if (currentSquareObj.name == "Chance") {
-      const card = chance_cards[CHANCE_IDX++ % chance_cards.length]
+      const card = chance_cards[idx.chance++ % chance_cards.length]
       display(card)
       showAns()
       card.fn(game.players, currentPlayer)
+    } else if (currentSquareObj.name == "Geography") {
+      const problem = geo_problem[idx.geo++ % geo_problem.length];
+      display(problem)
+      yesButton.onclick = yes.bind({curr: currentPlayer, amount: 300})
+      noButton.onclick = no.bind({curr: currentPlayer, amount: 300})
     }
     resolve()
   })}
@@ -360,13 +369,22 @@ var Game = (function() {
     this.point = amount;
   };
 
+  function yes() {
+    showAns()
+    this.curr.incrpoint(this.amount)
+    this.amount = 0 // set amount to 0 to prevent multiple clicks
+  }
+
+  function no() {
+    showAns()
+  }
+
   return game;
 })();
 
 function display(card) {
   document.getElementById("overlay").style.display = "block";
   document.getElementById("info").style.display = "block";
-  // const problem = geo_problem[Math.floor(Math.random() * geo_problem.length)];
   document.getElementById("info-title").innerText = card.title;
   document.getElementById("info-img").src = "images/" + card.img;
   document.getElementById("info-ans").innerText = card.description;
