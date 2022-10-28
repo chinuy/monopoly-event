@@ -27,7 +27,7 @@ TODO sessionStorage
 TODO remote control
 TODO move score in the center
 TODO animated score
-TODO animated moving
+TODO animated moving 
 */
 Array.prototype.sample = function(){
   return this[Math.floor(Math.random()*this.length)];
@@ -55,6 +55,8 @@ let CHANCE_IDX = 0
 const chance_cards = [
   { img: "card/run.jpg", title: "暴走卡", description: "往前6步", fn: (players, curr) => { movePlayer(6, curr) }}, // odd
   { img: "card/tax.jpg", title: "查稅卡", description: "失去$300分", fn: (players, curr) => {curr.reducepoint(300)}},
+  { img: "card/fortune_god.jpg", title: "福神卡", description: "得到$900分", fn: (players, curr) => {curr.incrpoint(900)}},
+  { img: "card/Poor God.jpg", title: "窮神卡", description: "失去$900分", fn: (players, curr) => {curr.reducepoint(900)}},
   { img: "card/angel.jpg", title: "天使卡", description: "得到$300分", fn: (players, curr) => {curr.incrpoint(300)}},
   { img: "card/equal_prosperity.jpg", title: "均富卡", description: "所有人點數平分。", fn: (players, curr) => { 
     let new_point = Math.ceil(players.reduce((pSum, a) => pSum + a.point, 0) / players.length); players.forEach(player => player.updatepoint(new_point)) }},
