@@ -93,10 +93,8 @@ var Game = (function() {
   blocks = [
     {name: "Start", image: "card/start"},
     {name: "Wisdom", image: "building/loscucos"},
-    {name: "Chance", image: "card/question"},
-    {name: "Chance", image: "card/question"},
-    // {name: "Geography", image: "building/geo_3"},
-    // {name: "Wisdom", image: "building/jimmy"},
+    {name: "Geography", image: "building/geo_3"},
+    {name: "Wisdom", image: "building/jimmy"},
     {name: "Geography", image: "building/geo_2"},
     {name: "Wisdom", image: "building/roadhouse"},
     {name: "Chance", image: "card/question"},
@@ -106,10 +104,8 @@ var Game = (function() {
     {name: "Wisdom", image: "building/whatta"},
     {name: "Chance", image: "card/question"},
     {name: "Logo King", image: "building/ihop"},
-    {name: "Chance", image: "card/question"},
-    {name: "Chance", image: "card/question"},
-    // {name: "Wisdom", image: "building/rudys"},
-    // {name: "Logo King", image: "building/mcalisters"},
+    {name: "Wisdom", image: "building/rudys"},
+    {name: "Logo King", image: "building/mcalisters"},
     {name: "Geography", image: "building/geo_4"},
   ]
   console.log(blocks.length + " blocks info defined")
@@ -197,16 +193,21 @@ var Game = (function() {
     }
     
     const info = document.getElementById("player-info")
+    let player_info_html = `<div class="divTable" style="height: 100%;" ><div class="divTableBody">`
     for (let i = 1 ; i < game.players.length + 1; i++) {
-      info.innerHTML += `
-      <div class="player-info" id="player${i}-info">
+      if (i % 2 == 1) {player_info_html += `<div class="divTableRow">`}
+      player_info_html += `
+      <div class="divTableCell player-info-each" id="player${i}-info">
         <p>Player ${i}</p>
         <p id="player${i}-info_name">${game.players[i-1].name}</p>
         <p id="player${i}-info_token"></p>
         <p id="player${i}-info_point">${game.players[i-1].point}</p>
       </div>
       `
+      if (i % 2 == 0) {player_info_html += `</div>`}
     }
+    player_info_html += `</div></div>`
+    info.innerHTML = player_info_html
   };
 
   //public function to handle taking of turn. Should:

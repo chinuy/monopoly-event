@@ -28,14 +28,20 @@ div {
   position: relative;
 }
 
-.player-info {
-  outline: .25em solid white;
-  background-color: lightblue;
-  display: table-cell;
+#player-info {
   text-align: center;
-  padding: .5em;
-  position: relative;
-  background-color: white;
+  width: 635px;
+  height: 380px;
+  position: absolute;
+  display: block;
+  background-color: rgb(240, 241, 230);
+  top: 25%;
+  left: 16.7%;
+  z-index: 5;
+  text-align: center;
+}
+
+.player-info-each {
 }
 
 .cell img {
@@ -161,7 +167,7 @@ div {
   display: none;
   background-color: rgb(240, 241, 230);
   top: 25%;
-  left: 16%;
+  left: 16.7%;
   z-index: 10;
   text-align: center;
   font-size: xx-large;
@@ -172,6 +178,24 @@ div {
 }
 
 #info-ans {
-  background-image: url("images/card/geo_back.png");
   display: none;
+}
+
+/* DivTable.com */
+.divTable{
+	display: table;
+	width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.divTableRow {
+	display: table-row;
+}
+.divTableCell, .divTableHead {
+	border: 1px solid #999999;
+	display: table-cell;
+	padding: 3px 10px;
+}
+.divTableBody {
+	display: table-row-group;
 }
