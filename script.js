@@ -264,8 +264,8 @@ var Game = (function() {
       var nextSquare = currentSquare + moves;
     } else {
       var nextSquare = currentSquare + moves - totalSquares;
-      currentPlayer.updatepoint(currentPlayer.point + 500);
-      console.log("$500 for passing start");
+      currentPlayer.incrpoint(1000);
+      console.log("$1000 for passing start");
     }
 
     //update current square in object (the string "square" plus the index of the next square)
@@ -293,11 +293,11 @@ var Game = (function() {
 
     //check if the player landed on start
     if (currentSquareId == "square1") {
-      currentPlayer.updatepoint(currentPlayer.point + 100);
-      updateByID(
-        "messagePara",
-        currentPlayer.name + ": You landed on start. Here's an extra $100"
-      );
+      currentPlayer.incrpoint(1000);
+      // updateByID(
+      //   "messagePara",
+      //   currentPlayer.name + ": You landed on start. Here's an extra $100"
+      // );
     }  else if (currentSquareObj.name == "Chance") {
       const card = chance_cards[idx.chance++ % chance_cards.length]
       display(card)
