@@ -110,7 +110,7 @@ div {
   border-radius: 50px;
 }
 
-#player4-info_token {
+#player0-info_token {
   display: inline-block;
   margin: 0;
   width: 0;
@@ -140,7 +140,7 @@ div {
   background: green;
 }
 
-.player4-token {
+.player0-token {
   position: absolute;
   top: 9em;
   left: 4em;
@@ -198,4 +198,7 @@ div {
 }
 .divTableBody {
 	display: table-row-group;
+}
+.divTableCell.current {
+  border: 3px solid red;
 }

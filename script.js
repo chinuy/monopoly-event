@@ -25,7 +25,6 @@
 /*
 TODO sessionStorage
 TODO remote control
-TODO move score in the center
 TODO animated score
 TODO animated moving 
 */
@@ -71,8 +70,9 @@ const chance_cards = [
 window.onload = function() {
   //find dice role button and bind takeTurn method
   const rollButton = document.getElementById("rollButton");
-  const yesButton = document.getElementById("rollButton");
-  const noButton = document.getElementById("rollButton");
+  const yesButton = document.getElementById("yesButton");
+  const noButton = document.getElementById("noButton");
+  yesButton.disabled = noButton.disabled = true
 
   rollButton.onclick = Game.takeTurn;
 
@@ -115,10 +115,10 @@ var Game = (function() {
   //build an array of players
   //note: initial version of the game only allows two fixed players
   game.players = [
-    new Player("Stan", 1000, "Triangle", "player1"),
-    new Player("Nick", 1000, "Circle", "player2"),
-    new Player("Kelly", 1000, "Circle", "player3"),
-    new Player("Kevin", 1000, "Triangle", "player4")
+    new Player("Stan", 1000, "Triangle", "player0"),
+    new Player("Nick", 1000, "Triangle", "player1"),
+    new Player("Kelly", 1000, "Circle", "player2"),
+    new Player("Kevin", 1000, "Circle", "player3")
   ];
 
   //set the game property for current player. Initially player 1. (Using an index of the game.players array.)
@@ -136,37 +136,37 @@ var Game = (function() {
   }
 
   //set up a method that will add the squares to the game board
-  game.populateBoard = function() {
-    const gameBoard = document.getElementById("game_board")
-    const X = 6
-    const Y = 4
-    let headIdx = 1
-    let tailIdx = 2*X + 2*(Y-2)
+  game.populateBoard = function () {
+    const gameBoard = document.getElementById("game_board");
+    const X = 6;
+    const Y = 4;
+    let headIdx = 1;
+    let tailIdx = 2 * X + 2 * (Y - 2);
 
     // generate first row
-    let rowHtml = ""
+    let rowHtml = "";
     for (let i = 0; i < X; i++) {
       rowHtml += cell(headIdx++);
     }
-    gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`
+    gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`;
 
     // generate middle row
-    for (let i = 1; i < Y-1; i++) {
-      let rowHtml = ""
+    for (let i = 1; i < Y - 1; i++) {
+      let rowHtml = "";
       rowHtml += cell(tailIdx--);
-      for (let j = 1; j < X-1; j++) {
-          rowHtml += '<div class="cell middle"></div>'
+      for (let j = 1; j < X - 1; j++) {
+        rowHtml += '<div class="cell middle"></div>';
       }
       rowHtml += cell(headIdx++);
-      gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`
+      gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`;
     }
 
     // generate last row
-    rowHtml = ""
+    rowHtml = "";
     for (let i = 0; i < X; i++) {
-      rowHtml += cell(tailIdx--)
+      rowHtml += cell(tailIdx--);
     }
-    gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`
+    gameBoard.innerHTML += `<div class="row">${rowHtml}</div>`;
 
     //loop through all the squares in the game board
     for (var i = 0; i < this.squares.length; i++) {
@@ -191,50 +191,55 @@ var Game = (function() {
       //using private function to create tokens
       game.players[i].createToken(square1);
     }
-    
-    const info = document.getElementById("player-info")
-    let player_info_html = `<div class="divTable" style="height: 100%;" ><div class="divTableBody">`
-    for (let i = 1 ; i < game.players.length + 1; i++) {
-      if (i % 2 == 1) {player_info_html += `<div class="divTableRow">`}
+
+    const info = document.getElementById("player-info");
+    let player_info_html = `<div class="divTable" style="height: 100%;" ><div class="divTableBody">`;
+    for (let i = 0; i < game.players.length; i++) {
+      if (i % 2 == 0) {
+        player_info_html += `<div class="divTableRow">`;
+      }
       player_info_html += `
       <div class="divTableCell player-info-each" id="player${i}-info">
-        <p>Player ${i}</p>
-        <p id="player${i}-info_name">${game.players[i-1].name}</p>
+        <p>Player ${i + 1}</p>
+        <p id="player${i}-info_name">${game.players[i].name}</p>
         <p id="player${i}-info_token"></p>
-        <p id="player${i}-info_point">${game.players[i-1].point}</p>
+        <p id="player${i}-info_point">${game.players[i].point}</p>
       </div>
-      `
-      if (i % 2 == 0) {player_info_html += `</div>`}
+      `;
+      if (i % 2 == 1) {
+        player_info_html += `</div>`;
+      }
     }
-    player_info_html += `</div></div>`
-    info.innerHTML = player_info_html
+    player_info_html += `</div></div>`;
+    info.innerHTML = player_info_html;
+
+    document.getElementById("player"+ 0 + "-info").classList.add("current")
+    updateByID("currentTurn", game.players[game.currentPlayer].name);
   };
 
   //public function to handle taking of turn. Should:
   //roll the dice
   //advance the player
   //call function to either allow purchase or charge rent
-  game.takeTurn = async function() {
+  game.takeTurn = function () {
+    rollButton.disabled = true;
     off();
     //roll dice and advance player
-    game.movePlayer(Math.floor(Math.random() * (4 - 1) + 1), game.players[game.currentPlayer]);
+    game.movePlayer(
+      Math.floor(Math.random() * (4 - 1) + 1),
+      game.players[game.currentPlayer]
+    );
 
     //check the tile the player landed on
     //if the tile is not owned, prompt player to buy
     //if the tile is owned, charge rent and move on
-    await checkTile();
+    checkTile();
 
     //loss condition:
     //if current player drops below $0, they've lost
     // if (game.players[game.currentPlayer].point < 0) {
     //   alert("Sorry " + game.players[game.currentPlayer].name + ", you lose!");
     // }
-
-    //advance to next player
-    game.currentPlayer = nextPlayer(game.currentPlayer);
-
-    //update info panel with name of current player
-    updateByID("currentTurn", game.players[game.currentPlayer].name);
   };
 
   /****                    Game-level private functions                        *****/
@@ -242,12 +247,10 @@ var Game = (function() {
   //(leaving this as a private function rather than method of Player because
   //current player is more of a game level property than a player level property)
   function nextPlayer(currentPlayer) {
-    var nextPlayer = currentPlayer + 1;
+    const nextPlayer = (currentPlayer + 1) % game.players.length;
 
-    if (nextPlayer == game.players.length) {
-      return 0;
-    }
-
+    document.getElementById("player"+ currentPlayer + "-info").classList.remove("current")
+    document.getElementById("player"+ nextPlayer + "-info").classList.add("current")
     return nextPlayer;
   }
 
@@ -284,7 +287,6 @@ var Game = (function() {
   //function that checks the tile the player landed on and allows the player to act appropriately
   //(buy, pay rent, or move on if owned)
   function checkTile() {
-    return new Promise((resolve) => {
     var currentPlayer = game.players[game.currentPlayer];
     var currentSquareId = currentPlayer.currentSquare;
     var currentSquareObj = game.squares.filter(function(square) {
@@ -294,23 +296,23 @@ var Game = (function() {
     //check if the player landed on start
     if (currentSquareId == "square1") {
       currentPlayer.incrpoint(1000);
-      // updateByID(
-      //   "messagePara",
-      //   currentPlayer.name + ": You landed on start. Here's an extra $100"
-      // );
+      next()
     }  else if (currentSquareObj.name == "Chance") {
       const card = chance_cards[idx.chance++ % chance_cards.length]
       display(card)
       showAns()
       card.fn(game.players, currentPlayer)
+      next()
     } else if (currentSquareObj.name == "Geography") {
       const problem = geo_problem[idx.geo++ % geo_problem.length];
       display(problem)
       yesButton.onclick = yes.bind({curr: currentPlayer, amount: 300})
       noButton.onclick = no.bind({curr: currentPlayer, amount: 300})
+      yesButton.disabled = noButton.disabled = false
+    } else {
+      next()
     }
-    resolve()
-  })}
+  }
 
   //function to update inner HTML based on element ID
   function updateByID(id, msg) {
@@ -374,29 +376,42 @@ var Game = (function() {
     showAns()
     this.curr.incrpoint(this.amount)
     this.amount = 0 // set amount to 0 to prevent multiple clicks
+    next()
   }
 
   function no() {
     showAns()
+    next()
+  }
+
+  function next() {
+    yesButton.disabled = true
+    noButton.disabled = true
+    rollButton.disabled = false
+    setTimeout( () => {
+      off()
+      game.currentPlayer = nextPlayer(game.currentPlayer);
+      updateByID("currentTurn", game.players[game.currentPlayer].name);
+    }, 1000)
+  }
+
+  function display(card) {
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("info").style.display = "block";
+    document.getElementById("info-title").innerText = card.title;
+    document.getElementById("info-img").src = "images/" + card.img;
+    document.getElementById("info-ans").innerText = card.description;
+  }
+
+  function showAns() {
+    document.getElementById("info-ans").style.display = "block";
+  }
+
+  function off() {
+    document.getElementById("overlay").style.display = "none";
+    document.getElementById("info").style.display = "none";
+    document.getElementById("info-ans").style.display = "none";
   }
 
   return game;
 })();
-
-function display(card) {
-  document.getElementById("overlay").style.display = "block";
-  document.getElementById("info").style.display = "block";
-  document.getElementById("info-title").innerText = card.title;
-  document.getElementById("info-img").src = "images/" + card.img;
-  document.getElementById("info-ans").innerText = card.description;
-}
-
-function showAns() {
-  document.getElementById("info-ans").style.display = "block";
-}
-
-function off() {
-  document.getElementById("overlay").style.display = "none";
-  document.getElementById("info").style.display = "none";
-  document.getElementById("info-ans").style.display = "none";
-}
