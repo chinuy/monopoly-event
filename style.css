@@ -30,18 +30,19 @@ div {
 
 #player-info {
   text-align: center;
-  width: 635px;
-  height: 380px;
+  width: 625px;
+  height: 370px;
   position: absolute;
   display: block;
   background-color: rgb(240, 241, 230);
-  top: 25%;
-  left: 16.7%;
+  top: 25.5%;
+  left: 17.3%;
   z-index: 5;
   text-align: center;
 }
 
-.player-info-each {
+.control_board {
+  padding-top: 5px;
 }
 
 .cell img {
@@ -200,5 +201,9 @@ div {
 	display: table-row-group;
 }
 .divTableCell.current {
-  border: 3px solid red;
+  box-shadow: 0 0 0 1px darkturquoise,
+              0 0 0 3px firebrick,
+              0 0 0 5px orange,
+              0 0 0 6px darkturquoise;
+  outline: dashed 6px darkturquoise;
 }
