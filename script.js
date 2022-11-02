@@ -214,7 +214,6 @@ var Game = (function() {
     info.innerHTML = player_info_html;
 
     document.getElementById("player"+ 0 + "-info").classList.add("current")
-    updateByID("currentTurn", game.players[game.currentPlayer].name);
   };
 
   //public function to handle taking of turn. Should:
@@ -314,11 +313,6 @@ var Game = (function() {
     }
   }
 
-  //function to update inner HTML based on element ID
-  function updateByID(id, msg) {
-    document.getElementById(id).innerHTML = msg;
-  }
-
   /****                       Constructor functions                             *****/
 
   /*constructor function for properties (game board squares)*/
@@ -358,8 +352,20 @@ var Game = (function() {
 
 
   Player.prototype.incrpoint = function(amount) {
-    this.updatepoint(this.point + amount)
-  }
+    const this_player = this
+    $('<span class="plus"/>', {
+        style: 'display:none'
+      })
+      .html('+' + amount)
+      .appendTo($('#' + this.id + '-info'))
+      .fadeIn('1000', function() {
+        var el = $(this);
+        setTimeout(function() {
+          el.remove();
+        }, 2000);
+        this_player.updatepoint(this_player.point + amount)
+      });
+  };
 
   Player.prototype.reducepoint = function(amount) {
     const new_point = this.point > amount? this.point - amount : 0;
@@ -374,25 +380,27 @@ var Game = (function() {
 
   function yes() {
     showAns()
-    this.curr.incrpoint(this.amount)
+    setTimeout( () => {
+      off()
+      this.curr.incrpoint(this.amount)
     this.amount = 0 // set amount to 0 to prevent multiple clicks
-    next()
+      next()
+    }, 1000)
   }
 
   function no() {
     showAns()
-    next()
+    setTimeout( () => {
+      off()
+      next()
+    }, 1000)
   }
 
   function next() {
     yesButton.disabled = true
     noButton.disabled = true
     rollButton.disabled = false
-    setTimeout( () => {
-      off()
-      game.currentPlayer = nextPlayer(game.currentPlayer);
-      updateByID("currentTurn", game.players[game.currentPlayer].name);
-    }, 1000)
+    game.currentPlayer = nextPlayer(game.currentPlayer);
   }
 
   function display(card) {
