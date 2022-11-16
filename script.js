@@ -56,13 +56,13 @@ const geo_problem = [
 ];
 
 const chance_cards = [
-  { img: "card/run.jpg", title: "暴走卡", description: "往前6步", fn: (players, curr) => { Game.movePlayer(1, curr) }}, // odd
+  { img: "card/run.jpg", title: "暴走卡", description: "往前6步", fn: (players, curr) => { Game.movePlayer(6, curr) }}, // odd
   { img: "card/tax.jpg", title: "查稅卡", description: "失去$300分", fn: (players, curr) => {curr.reducepoint(300)}},
   { img: "card/fortune_god.jpg", title: "福神卡", description: "得到$900分", fn: (players, curr) => {curr.incrpoint(900)}},
   { img: "card/Poor God.jpg", title: "窮神卡", description: "失去$900分", fn: (players, curr) => {curr.reducepoint(900)}},
   { img: "card/angel.jpg", title: "天使卡", description: "得到$300分", fn: (players, curr) => {curr.incrpoint(300)}},
   { img: "card/equal_prosperity.jpg", title: "均富卡", description: "所有人點數平分。", fn: (players, curr) => { 
-    let new_point = Math.ceil(players.reduce((pSum, a) => pSum + a.point, 0) / players.length); players.forEach(player => player.updatepoint(new_point)) }},
+    let new_point = Math.ceil(players.reduce((pSum, a) => pSum + a.point, 0) / players.length); players.forEach(player => new_point > player.point? player.incrpoint(new_point - player.point) : player.reducepoint(player.point - new_point)) }},
   { img: "card/rober.jpg", title: "搶奪卡", description: "搶得最高分玩家$600分", fn: (players, curr) => { 
     const high_point = Math.max(...players.filter(p => p.id != curr.id).map(p => p.point), 0); players.filter(p=> p.point == high_point & (p.id != curr.id)).sample().reducepoint(600); curr.incrpoint(600) } },
 ]
@@ -92,8 +92,8 @@ var Game = (function() {
 
   blocks = [
     {name: "Start", image: "card/start"},
-    {name: "Wisdom", image: "building/loscucos"},
     {name: "Geography", image: "building/geo_3"},
+    {name: "Chance", image: "card/question"},
     {name: "Wisdom", image: "building/jimmy"},
     {name: "Geography", image: "building/geo_2"},
     {name: "Wisdom", image: "building/roadhouse"},
@@ -300,8 +300,11 @@ var Game = (function() {
       const card = chance_cards[idx.chance++ % chance_cards.length]
       display(card)
       showAns()
-      card.fn(game.players, currentPlayer)
-      setTimeout( () => {off(); next();}, 3000)
+      setTimeout( () => {
+        off(); 
+        card.fn(game.players, currentPlayer)
+        setTimeout( () => next(), 2000)
+      }, 3000)
     } else if (currentSquareObj.name == "Geography") {
       const problem = geo_problem[idx.geo++ % geo_problem.length];
       display(problem)
@@ -370,8 +373,21 @@ var Game = (function() {
   };
 
   Player.prototype.reducepoint = function(amount) {
+    const this_player = this
     const new_point = this.point > amount? this.point - amount : 0;
-    this.updatepoint(new_point);
+    $('<span class="negative"/>', {
+        style: 'display:none;'
+      })
+      .css('animation-name', parseInt(this_player.id.slice(6)) < 2 ?  'fade-in-down-top' :  'fade-in-down-bottom')
+      .html('-' + amount)
+      .appendTo($('#' + this_player.id + '-info'))
+      .fadeIn('1000', function() {
+        var el = $(this);
+        setTimeout(function() {
+          el.remove();
+        }, 2000);
+        this_player.updatepoint(new_point);
+      });
   }
 
   //method to update the amount of point a player has
@@ -385,7 +401,7 @@ var Game = (function() {
     setTimeout( () => {
       off()
       this.curr.incrpoint(this.amount)
-    this.amount = 0 // set amount to 0 to prevent multiple clicks
+      this.amount = 0 // set amount to 0 to prevent multiple clicks
       next()
     }, 1000)
   }
@@ -394,6 +410,7 @@ var Game = (function() {
     showAns()
     setTimeout( () => {
       off()
+      this.curr.reducepoint(this.amount)
       next()
     }, 1000)
   }

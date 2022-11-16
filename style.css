@@ -222,7 +222,6 @@ div {
 .plus {
   color: green;
   position: absolute;
-  /* left: 50%; */
   transform: translate(0%, -50%);
   /* animation-name: fade-in-up; */
   animation-duration: 3s;
@@ -233,9 +232,8 @@ div {
 .negative {
   color: red;
   position: absolute;
-  left: 50%;
   transform: translate(-50%, -50%);
-  animation-name: fade-in-down;
+  /* animation-name: fade-in-down; */
   animation-duration: 3s;
   animation-iteration-count: 1;
   animation-timing-function: ease;
@@ -266,14 +264,26 @@ div {
 }
 
 
-@keyframes fade-in-down {
+@keyframes fade-in-down-top {
   0%,
   10% {
-    top: 50%;
+    top: 35%;
     opacity: 1;
   }
   100% {
-    top: -100%;
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in-down-bottom {
+  0%,
+  10% {
+    top: 85%;
+    opacity: 1;
+  }
+  100% {
+    top: 150%;
     opacity: 0;
   }
 }
