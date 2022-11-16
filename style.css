@@ -223,8 +223,8 @@ div {
   color: green;
   position: absolute;
   /* left: 50%; */
-  transform: translate(-50%, -50%);
-  animation-name: fade-in-up;
+  transform: translate(0%, -50%);
+  /* animation-name: fade-in-up; */
   animation-duration: 3s;
   animation-iteration-count: 1;
   animation-timing-function: ease;
@@ -241,7 +241,7 @@ div {
   animation-timing-function: ease;
 }
 
-@keyframes fade-in-up {
+@keyframes fade-in-up-top {
   0%,
   10% {
     top: 35%;
@@ -252,6 +252,19 @@ div {
     opacity: 0;
   }
 }
+
+@keyframes fade-in-up-bottom {
+  0%,
+  10% {
+    top: 85%;
+    opacity: 1;
+  }
+  100% {
+    top: -100%;
+    opacity: 0;
+  }
+}
+
 
 @keyframes fade-in-down {
   0%,

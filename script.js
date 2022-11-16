@@ -301,7 +301,7 @@ var Game = (function() {
       display(card)
       showAns()
       card.fn(game.players, currentPlayer)
-      next()
+      setTimeout( () => {off(); next();}, 3000)
     } else if (currentSquareObj.name == "Geography") {
       const problem = geo_problem[idx.geo++ % geo_problem.length];
       display(problem)
@@ -353,11 +353,13 @@ var Game = (function() {
 
   Player.prototype.incrpoint = function(amount) {
     const this_player = this
+
     $('<span class="plus"/>', {
-        style: 'display:none'
+        style: 'display:none;'
       })
+      .css('animation-name', parseInt(this_player.id.slice(6)) < 2 ?  'fade-in-up-top' :  'fade-in-up-bottom')
       .html('+' + amount)
-      .appendTo($('#' + this.id + '-info'))
+      .appendTo($('#' + this_player.id + '-info'))
       .fadeIn('1000', function() {
         var el = $(this);
         setTimeout(function() {
