@@ -24,8 +24,7 @@
 */
 /*
 TODO sessionStorage
-TODO remote control
-TODO animated score
+TODO remote control --pending
 TODO animated moving 
 */
 Array.prototype.sample = function(){
@@ -56,7 +55,7 @@ const geo_problem = [
 ];
 
 const chance_cards = [
-  { img: "card/run.jpg", title: "暴走卡", description: "往前6步", fn: (players, curr) => { Game.movePlayer(6, curr) }}, // odd
+  { img: "card/run.jpg", title: "暴走卡", description: "往前6步", fn: async (players, curr) => { await Game.movePlayer(6, curr) }},
   { img: "card/tax.jpg", title: "查稅卡", description: "失去$300分", fn: (players, curr) => {curr.reducepoint(300)}},
   { img: "card/fortune_god.jpg", title: "福神卡", description: "得到$900分", fn: (players, curr) => {curr.incrpoint(900)}},
   { img: "card/Poor God.jpg", title: "窮神卡", description: "失去$900分", fn: (players, curr) => {curr.reducepoint(900)}},
@@ -220,12 +219,12 @@ var Game = (function() {
   //roll the dice
   //advance the player
   //call function to either allow purchase or charge rent
-  game.takeTurn = function () {
+  game.takeTurn = async function () {
     rollButton.disabled = true;
     off();
     //roll dice and advance player
-    game.movePlayer(
-      Math.floor(Math.random() * (4 - 1) + 1),
+    await game.movePlayer(
+      Math.floor(Math.random() * (10 - 1) + 1),
       game.players[game.currentPlayer]
     );
 
@@ -254,38 +253,41 @@ var Game = (function() {
   }
 
   //function to "roll the dice" and advance the player to the appropriate square
-  game.movePlayer = function(moves, currentPlayer) {
+  game.movePlayer = async function(moves, currentPlayer) {
     //"dice roll". Should be between 1 and 4
     //need the total number of squares, adding 1 because start isn't included in the squares array
     var totalSquares = game.squares.length;
     //get the current player and the square he's on
-    var currentSquare = parseInt(currentPlayer.currentSquare.slice(6));
 
-    //figure out if the roll will put player past start. If so, reset and give money for passing start
-    if (currentSquare + moves <= totalSquares) {
-      var nextSquare = currentSquare + moves;
-    } else {
-      var nextSquare = currentSquare + moves - totalSquares;
-      currentPlayer.incrpoint(1000);
-      console.log("$1000 for passing start");
+    for(let i = 0; i < moves; i++) {
+      await timer(1000)
+      const currentSquare = parseInt(currentPlayer.currentSquare.slice(6));
+      let nextSquare = currentSquare + 1;
+
+      //figure out if the roll will put player past start. If so, reset and give money for passing start
+      if(nextSquare > totalSquares) {
+        nextSquare -= totalSquares;
+        currentPlayer.incrpoint(1000);
+        console.log("$1000 for passing start");
+      }
+
+      //update current square in object (the string "square" plus the index of the next square)
+      currentPlayer.currentSquare = "square" + nextSquare;
+
+      //find and remove current player token
+      var currentToken = document.getElementById(currentPlayer.id);
+      currentToken.parentNode.removeChild(currentToken);
+
+      //add player to next location
+      currentPlayer.createToken(
+        document.getElementById(currentPlayer.currentSquare)
+      );
     }
-
-    //update current square in object (the string "square" plus the index of the next square)
-    currentPlayer.currentSquare = "square" + nextSquare;
-
-    //find and remove current player token
-    var currentToken = document.getElementById(currentPlayer.id);
-    currentToken.parentNode.removeChild(currentToken);
-
-    //add player to next location
-    currentPlayer.createToken(
-      document.getElementById(currentPlayer.currentSquare)
-    );
   }
 
   //function that checks the tile the player landed on and allows the player to act appropriately
   //(buy, pay rent, or move on if owned)
-  function checkTile() {
+  async function checkTile() {
     var currentPlayer = game.players[game.currentPlayer];
     var currentSquareId = currentPlayer.currentSquare;
     var currentSquareObj = game.squares.filter(function(square) {
@@ -300,11 +302,11 @@ var Game = (function() {
       const card = chance_cards[idx.chance++ % chance_cards.length]
       display(card)
       showAns()
-      setTimeout( () => {
-        off(); 
-        card.fn(game.players, currentPlayer)
-        setTimeout( () => next(), 2000)
-      }, 3000)
+      await timer(3000)
+      off();
+      await card.fn(game.players, currentPlayer);
+      await timer(2000);
+      next();
     } else if (currentSquareObj.name == "Geography") {
       const problem = geo_problem[idx.geo++ % geo_problem.length];
       display(problem)
@@ -439,6 +441,8 @@ var Game = (function() {
     document.getElementById("info").style.display = "none";
     document.getElementById("info-ans").style.display = "none";
   }
+
+  const timer = ms => new Promise(res => setTimeout(res, ms))
 
   return game;
 })();
