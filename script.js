@@ -25,8 +25,12 @@
 /*
 TODO sessionStorage
 TODO remote control --pending
-TODO animated moving 
+TODO dice
 */
+
+/* helper function */
+const timer = ms => new Promise(res => setTimeout(res, ms))
+
 Array.prototype.sample = function(){
   return this[Math.floor(Math.random()*this.length)];
 }
@@ -74,6 +78,8 @@ window.onload = function() {
   yesButton.disabled = noButton.disabled = true
 
   rollButton.onclick = Game.takeTurn;
+
+  document.getElementById("dice_overlay").style.display = "none";
 
   //initialize board
   Game.populateBoard();
@@ -222,16 +228,20 @@ var Game = (function() {
   game.takeTurn = async function () {
     rollButton.disabled = true;
     off();
+
     //roll dice and advance player
+    const move = Math.floor(Math.random() * (6 - 1) + 1)
+    await rollDice(move)
+
     await game.movePlayer(
-      Math.floor(Math.random() * (10 - 1) + 1),
+      move,
       game.players[game.currentPlayer]
     );
 
     //check the tile the player landed on
     //if the tile is not owned, prompt player to buy
     //if the tile is owned, charge rent and move on
-    checkTile();
+    await checkTile();
 
     //loss condition:
     //if current player drops below $0, they've lost
@@ -442,7 +452,14 @@ var Game = (function() {
     document.getElementById("info-ans").style.display = "none";
   }
 
-  const timer = ms => new Promise(res => setTimeout(res, ms))
-
   return game;
 })();
+
+async function rollDice(result) {
+    document.getElementById("dice_overlay").style.removeProperty("display");
+    await timer(100)
+    dice.dataset.side = result;
+    dice.classList.toggle("reRoll");
+    await timer(2800)
+    document.getElementById("dice_overlay").style.display = "none";
+}
